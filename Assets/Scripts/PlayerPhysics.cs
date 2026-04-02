@@ -1,4 +1,5 @@
 using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 
 public class PlayerPhysics : MonoBehaviour
@@ -10,12 +11,9 @@ public class PlayerPhysics : MonoBehaviour
     public bool isOnGround = false;
     public float checkOffset = 2.0f;
     public float groundCheckDistance = 0.2f;
-
     public float jumpSpeed = 15.0f;
     public bool canCheckForGround = true;
     public float groundCheckTime = 0.25f;
-
-
     private void Jump()
     {
         StopAllCoroutines();
@@ -26,7 +24,7 @@ public class PlayerPhysics : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isOnGround && canCheckForGround)
+        if (canCheckForGround)
         {
 #if UNITY_EDITOR
             Debug.DrawRay(transform.position + Vector3.up * checkOffset,
@@ -67,24 +65,23 @@ public class PlayerPhysics : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (verticalSpeed > 0.0f)
             {
-                verticalSpeed = 0.0f;
-            }
-
-            if (Input.GetKey(KeyCode.Space))
-            {
-                verticalSpeed += Physics.gravity.y * Time.deltaTime;
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    verticalSpeed = 0.0f;
+                }
+                else if (Input.GetKey(KeyCode.Space))
+                {
+                    verticalSpeed += Physics.gravity.y * Time.deltaTime;
+                }
             }
             else
             {
                 verticalSpeed += fallGravityFactor * Physics.gravity.y * Time.deltaTime;
             }
-
-            verticalSpeed = Mathf.Clamp(verticalSpeed, -terminalFallSpeed, jumpSpeed);
         }
-
-
+        verticalSpeed = Mathf.Clamp(verticalSpeed, -terminalFallSpeed, jumpSpeed);
         transform.Translate(Vector3.up * verticalSpeed * Time.deltaTime);
     }
 }
