@@ -7,8 +7,6 @@ public class CameraFollow : MonoBehaviour
 
     public Vector3 positionOffet;
 
-    public Vector3 rotationOffset;
-
     [Range(0.0f, 1.0f)]
     public float followFactor = 1.0f;
 
@@ -33,8 +31,12 @@ public class CameraFollow : MonoBehaviour
     }
 
 
-    void Update()
+    void LateUpdate()
     {
+        Vector3 targetPos = target.TransformPoint(positionOffet);
+        transform.position = Vector3.Lerp(transform.position, targetPos, followFactor);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, followFactor);
+
         if (canRotateViaMouse)
         {
             Vector3 targetRotation = target.rotation.eulerAngles;
@@ -47,13 +49,5 @@ public class CameraFollow : MonoBehaviour
             targetRotation.x = Mathf.Clamp(targetRotation.x, -maxXRotation, maxXRotation);
             target.rotation = Quaternion.Euler(targetRotation);
         }
-    }
-
-    void LateUpdate()
-    {
-        Vector3 targetPos = target.TransformPoint(positionOffet);
-        transform.position = Vector3.Lerp(transform.position, targetPos, followFactor);
-        Vector3 targetRot = target.rotation.eulerAngles + rotationOffset;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(targetRot), followFactor);
     }
 }

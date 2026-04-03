@@ -8,6 +8,6 @@ public class PositionSync : MonoBehaviour
 
     void Update()
     {
-        transform.position = syncTarget.position + positionOffset;
+        transform.position = syncTarget.TransformPoint(positionOffset);
     }
 }

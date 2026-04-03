@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -8,10 +9,26 @@ public class PlayerMovement : MonoBehaviour
 
     public Transform viewTarget;
 
+    public GravitySystem gravity;
+
+
     private Vector3 GetPlanerVector(Vector3 vec)
     {
         vec.y = 0;
         return vec;
+    }
+
+    public void AlignWithGravity(Vector3 up, Vector3 forward)
+    {
+        StartCoroutine(AligningWithGravity(up, forward));
+    }
+
+    private IEnumerator AligningWithGravity(Vector3 up, Vector3 forward)
+    {
+        yield return null;
+        // GetClampedForward
+        transform.up = up;
+        transform.forward = forward;
     }
 
     void Update()
