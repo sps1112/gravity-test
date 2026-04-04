@@ -18,6 +18,8 @@ public class CameraFollow : MonoBehaviour
 
     public bool canRotateViaMouse = false;
 
+    public GravitySystem gravitySystem;
+
     void Start()
     {
         StartCoroutine(FlushMouseMovement());
@@ -39,15 +41,36 @@ public class CameraFollow : MonoBehaviour
 
         if (canRotateViaMouse)
         {
-            Vector3 targetRotation = target.rotation.eulerAngles;
-            targetRotation.y += Input.mousePositionDelta.x * mouseSensitivity * Time.deltaTime;
-            targetRotation.x -= Input.mousePositionDelta.y * mouseSensitivity * Time.deltaTime;
-            if (targetRotation.x > 180.0f)
-            {
-                targetRotation.x -= 360.0f;
-            }
-            targetRotation.x = Mathf.Clamp(targetRotation.x, -maxXRotation, maxXRotation);
-            target.rotation = Quaternion.Euler(targetRotation);
+            float horizontalRot = Input.mousePositionDelta.x * mouseSensitivity * Time.deltaTime;
+            Vector3 up = gravitySystem.GetGravityUpDirection();
+            target.Rotate(up, horizontalRot, Space.World);
+
+
+            // float verticalRot = Input.mousePositionDelta.y * mouseSensitivity * Time.deltaTime;
+            // target.Rotate(target.right, verticalRot);
+
+            // Vector3 targetForward = target.forward;
+            // Vector3 localRight = Vector3.Cross(up, targetForward);
+            // float angle = Vector3.SignedAngle(up, targetForward, localRight);
+
+            // angle += Input.mousePositionDelta.y * mouseSensitivity * Time.deltaTime;
+            // Debug.Log(angle);
+            // Vector3 newForward=
+
+            // Vector3 forward = GravitySystem.GetClosestCardinalVector(target.forward);
+            // Vector3 right = Vector3.Cross(up, forward);
+            // Debug.Log(up + " " + forward + " " + right);
+            // target.Rotate(right, verticalRot);
+
+            // Vector3 targetRotation = target.rotation.eulerAngles;
+            // targetRotation.y +=
+            // targetRotation.x -=
+            // if (targetRotation.x > 180.0f)
+            // {
+            //     targetRotation.x -= 360.0f;
+            // }
+            // targetRotation.x = Mathf.Clamp(targetRotation.x, -maxXRotation, maxXRotation);
+            // target.rotation = Quaternion.Euler(targetRotation);
         }
     }
 }

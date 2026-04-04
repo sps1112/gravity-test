@@ -1,17 +1,15 @@
+using System;
 using UnityEngine;
 
 public class GravitySystem : MonoBehaviour
 {
     public Transform viewObject;
-
     public PlayerMovement player;
-
     public GameObject directionReference;
-
     public Transform reference;
     public Transform reference2;
 
-    private Vector3 GetClosestCardinalVector(Vector3 vec)
+    public static Vector3 GetClosestCardinalVector(Vector3 vec)
     {
         float ax = Mathf.Abs(vec.x);
         float ay = Mathf.Abs(vec.y);
@@ -46,57 +44,43 @@ public class GravitySystem : MonoBehaviour
     {
         Vector3 forward = GetViewForward();
         Vector3 right = GetViewRight(forward);
-        reference.up = forward;
-        reference2.up = right;
-        int option = 0;
+        Vector3 up = Vector3.Cross(forward, right);
+        // reference.up = forward;
+        // reference2.up = right;
+        Quaternion lookRotation = Quaternion.identity;
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             directionReference.SetActive(true);
-            directionReference.transform.up = -right;
-            option = 1;
+            lookRotation = Quaternion.LookRotation(forward, -right);
+            directionReference.transform.rotation = lookRotation;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             directionReference.SetActive(true);
-            directionReference.transform.up = right;
-            option = 2;
+            lookRotation = Quaternion.LookRotation(forward, right);
+            directionReference.transform.rotation = lookRotation;
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
             directionReference.SetActive(true);
-            directionReference.transform.up = forward;
-            option = 3;
+            lookRotation = Quaternion.LookRotation(-up, forward);
+            directionReference.transform.rotation = lookRotation;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             directionReference.SetActive(true);
-            directionReference.transform.up = -forward;
-            option = 4;
+            lookRotation = Quaternion.LookRotation(up, -forward);
+            directionReference.transform.rotation = lookRotation;
         }
         else
         {
             directionReference.SetActive(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) && option != 0)
+        if (Input.GetKeyDown(KeyCode.Return) && directionReference.activeSelf == true)
         {
-
-            Debug.Log(forward);
-            switch (option)
-            {
-                case 1:
-                    transform.Rotate(-forward, 90.0f);
-                    break;
-                case 2:
-                    transform.Rotate(forward, 90.0f);
-                    break;
-                case 3:
-                    transform.Rotate(-right, 90.0f);
-                    break;
-                case 4:
-                    transform.Rotate(right, 90.0f);
-                    break;
-            }
+            transform.rotation = lookRotation;
+            player.AlignWithGravity(lookRotation);
         }
     }
 

@@ -8,12 +8,10 @@ public class PlayerPhysics : MonoBehaviour
     public float verticalSpeed = 0.0f;
     public float fallGravityFactor = 1.0f;
     public bool isOnGround = false;
-    public float checkOffset = 2.0f;
     public float groundCheckDistance = 0.2f;
     public float jumpSpeed = 15.0f;
     public bool canCheckForGround = true;
     public float groundCheckTime = 0.25f;
-
     public GravitySystem gravity;
 
     private void Jump()
@@ -29,19 +27,17 @@ public class PlayerPhysics : MonoBehaviour
         if (canCheckForGround)
         {
 #if UNITY_EDITOR
-            Debug.DrawRay(transform.position + transform.up * checkOffset,
-             -gravity.GetGravityUpDirection() * (groundCheckDistance + checkOffset), Color.black, 0.01f);
+            Debug.DrawRay(transform.position, -gravity.GetGravityUpDirection() * groundCheckDistance, Color.black, 0.01f);
 #endif
 
-            if (Physics.Raycast(transform.position + transform.up * checkOffset,
-             -gravity.GetGravityUpDirection(), groundCheckDistance + checkOffset, LayerMask.GetMask("Ground")))
+            if (Physics.Raycast(transform.position, -gravity.GetGravityUpDirection(), groundCheckDistance, LayerMask.GetMask("Ground")))
             {
-                Debug.Log("On Ground");
+                // Debug.Log("On Ground");
                 isOnGround = true;
             }
             else
             {
-                Debug.Log("In Air");
+                // Debug.Log("In Air");
                 isOnGround = false;
             }
         }
